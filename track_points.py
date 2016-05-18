@@ -22,9 +22,18 @@ def pick_point(image, prev_pts=None):
     cv2.setMouseCallback(data[-1], point_picker_callback, data)
     cv2.startWindowThread()
 
+    font = cv2.FONT_HERSHEY_SIMPLEX
+    font_scale = 0.5
+    text_color = (0, 0, 0)
+    thickness = 1
+    line_type = cv2.LINE_AA
     for i, pt in enumerate(prev_pts):
         cv2.circle(image, tuple(pt), 3, (0, 0, 255), -1)
-        cv2.putText(image, str(i + 1), tuple(pt), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 0, 0), 1, cv2.LINE_AA)
+        text = str(i + 1)
+        test_position = tuple(pt)
+        (cv2.putText(image, text, test_position,
+                     font, font_scale, text_color,
+                     thickness, line_type))
 
     cv2.imshow(data[-1], data[0])
 
@@ -36,6 +45,10 @@ def pick_point(image, prev_pts=None):
     return data[1]
 
 if __name__ == "__main__":
+    if len(sys.argv) < 3:
+        print "python track_points.py N_POINTS_TO_TRACK IMAGE_1 IMAGE_2 ... IMAGE_N"
+        sys.exit(-1)
+
     npts = int(sys.argv[1])
     filenames = sys.argv[2:]
 

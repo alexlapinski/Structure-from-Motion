@@ -15,8 +15,10 @@ if __name__ == "__main__":
     cols = list(zip(*[ln.strip().split() for ln in open(desc_file).readlines()]))
     image_fns = [os.path.sep.join(desc_base + [imgfn]) for imgfn in cols[0]]
     images = [cv2.imread(fn) for fn in image_fns]
-    images = [cv2.resize(img, (1024*img.shape[1] // max(img.shape), 1024*img.shape[0] // max(img.shape))) for img in images]
-    image_points = np.column_stack(cols[1:]).astype(np.int).reshape(len(image_fns), -1, 2)
+    images = [cv2.resize(img, (1024 * img.shape[1] // max(img.shape), 1024 * img.shape[0] // max(img.shape))) for img in images]
+    image_points = (np.column_stack(cols[1:])
+                    .astype(np.int)
+                    .reshape(len(image_fns), -1, 2))
     F, N = image_points.shape[:2]
 
     # Call the supplied SFM implementation.
@@ -35,14 +37,14 @@ if __name__ == "__main__":
         img_reproj = img.copy()
         for i, pt in enumerate(pproj):
             ipt = (int(pt[0]), int(pt[1]))
-            cv2.circle(img_reproj, ipt, 5, (0,0,255), -1)
-            cv2.putText(img_reproj, str(i+1), ipt, cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0,0,0), 1, cv2.LINE_AA)
+            cv2.circle(img_reproj, ipt, 5, (0, 0, 255), -1)
+            cv2.putText(img_reproj, str(i + 1), ipt, cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 0, 0), 1, cv2.LINE_AA)
 
         img_corrs = img.copy()
         for i, pt in enumerate(ipts):
             ipt = (int(pt[0]), int(pt[1]))
-            cv2.circle(img_corrs, ipt, 5, (0,0,255), -1)
-            cv2.putText(img_corrs, str(i+1), ipt, cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0,0,0), 1, cv2.LINE_AA)
+            cv2.circle(img_corrs, ipt, 5, (0, 0, 255), -1)
+            cv2.putText(img_corrs, str(i + 1), ipt, cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 0, 0), 1, cv2.LINE_AA)
 
         fn = fn.split(os.path.sep)[-1]
         ext = fn.split(".")[-1]
