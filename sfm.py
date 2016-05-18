@@ -46,8 +46,8 @@ if __name__ == "__main__":
 
         fn = fn.split(os.path.sep)[-1]
         ext = fn.split(".")[-1]
-        cv2.imwrite("reprojections" + os.path.sep + fn.replace("."+ext, "_reprojected.png"), img_reproj)
-        cv2.imwrite("reprojections" + os.path.sep + fn.replace("."+ext, "_correspondences.png"), img_corrs)
+        cv2.imwrite("reprojections" + os.path.sep + fn.replace("." + ext, "_reprojected.png"), img_reproj)
+        cv2.imwrite("reprojections" + os.path.sep + fn.replace("." + ext, "_correspondences.png"), img_corrs)
 
     # Save an OBJ file with the reconstructed 3D points and texture-mapped
     # polygons.
@@ -60,7 +60,7 @@ if __name__ == "__main__":
 
     # Make sure the quad normals have positive Z value (facing the camera).
     for q in quad_inds:
-        qpts = P[q-1]
+        qpts = P[q - 1]
         v1 = qpts[0] - qpts[1]
         v2 = qpts[2] - qpts[1]
         n = np.cross(v2, v1)
@@ -73,7 +73,7 @@ if __name__ == "__main__":
 
     # Write the 3D points, swapping Y/Z axes to match the space of most 3D
     # programs.
-    P = P[:, [0,2,1]]
+    P = P[:, [0, 2, 1]]
     P[:, 2] *= -1
     objfile.writelines(["v " + " ".join(map(str, v)) + "\n" for v in P])
 
@@ -87,7 +87,7 @@ if __name__ == "__main__":
 
     for i, q in enumerate(quad_inds):
         # Extract a texture for each quad, taking the median across all views.
-        tex = get_texture(images, image_points[:, q-1])
+        tex = get_texture(images, image_points[:, q - 1])
         cv2.imwrite("textures/texture%d.png" % i, tex)
 
         # Write the material information for each quad.
@@ -106,5 +106,5 @@ if __name__ == "__main__":
 
         # Write the texture coordinates for each quad vertex.
         objfile.write("usemtl texture%d\n" % i)
-        objfile.write("f " + " ".join(["%d/%d" % (r, (j+1)) for j, r in enumerate(q)]) + "\n")
+        objfile.write("f " + " ".join(["%d/%d" % (r, (j + 1)) for j, r in enumerate(q)]) + "\n")
     objfile.close()

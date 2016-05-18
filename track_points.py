@@ -3,6 +3,7 @@ import sys
 import cv2
 import numpy as np
 
+
 def point_picker_callback(event, x, y, ignored, data):
     image = data[0]
     point = data[1]
@@ -10,6 +11,7 @@ def point_picker_callback(event, x, y, ignored, data):
 
     if event == cv2.EVENT_LBUTTONDOWN or event == cv2.EVENT_RBUTTONDOWN:
         point[:] = (x, y)
+
 
 def pick_point(image, prev_pts=None):
     data = [image, -np.ones((2,), np.float32), "Click a point."]
@@ -21,8 +23,8 @@ def pick_point(image, prev_pts=None):
     cv2.startWindowThread()
 
     for i, pt in enumerate(prev_pts):
-        cv2.circle(image, tuple(pt), 3, (0,0,255), -1)
-        cv2.putText(image, str(i+1), tuple(pt), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0,0,0), 1, cv2.LINE_AA)
+        cv2.circle(image, tuple(pt), 3, (0, 0, 255), -1)
+        cv2.putText(image, str(i + 1), tuple(pt), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 0, 0), 1, cv2.LINE_AA)
 
     cv2.imshow(data[-1], data[0])
 
@@ -38,7 +40,7 @@ if __name__ == "__main__":
     filenames = sys.argv[2:]
 
     imgs = [cv2.imread(fn) for fn in filenames]
-    imgs = [cv2.resize(img, (1024*img.shape[1] // max(img.shape), 1024*img.shape[0] // max(img.shape))) for img in imgs]
+    imgs = [cv2.resize(img, (1024 * img.shape[1] // max(img.shape), 1024 * img.shape[0] // max(img.shape))) for img in imgs]
 
     points = [[] for _ in range(len(imgs))]
     for _ in range(npts):
@@ -57,8 +59,8 @@ if __name__ == "__main__":
         img_corrs = imgs[i].copy("C")
         for j, pt in enumerate(points[i]):
             ipt = (int(pt[0]), int(pt[1]))
-            cv2.circle(img_corrs, ipt, 5, (0,0,255), -1)
-            cv2.putText(img_corrs, str(j+1), ipt, cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0,0,0), 1, cv2.LINE_AA)
+            cv2.circle(img_corrs, ipt, 5, (0, 0, 255), -1)
+            cv2.putText(img_corrs, str(j + 1), ipt, cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 0, 0), 1, cv2.LINE_AA)
         ext = filenames[i].split(".")[-1]
-        cv2.imwrite(filenames[i].replace("."+ext, "_correspondences.png"), img_corrs)
+        cv2.imwrite(filenames[i].replace("." + ext, "_correspondences.png"), img_corrs)
     out.close()

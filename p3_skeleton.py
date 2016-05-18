@@ -1,14 +1,17 @@
 import numpy as np
 from cv2 import findHomography, warpPerspective
 
+
 def build_W(points):
     """Build the mean-centered point matrix W. points should be an array with shape
     (num_frames, num_points, 2)."""
     return None
 
+
 def compute_RS(W):
     """Compute the matrices R and S from W using the SVD."""
     return None
+
 
 def solve_Q(ih, jh):
     """Solve for Q that satisfies the unit-vector and orthogonality constraints
@@ -21,6 +24,7 @@ def solve_Q(ih, jh):
 
     # Solve for Q and return it.
     return None
+
 
 def sfm(points):
     """Run the SfM factorization on a set of points. points will be an array
@@ -37,6 +41,7 @@ def sfm(points):
     # Return the list of R matrices and an Nx3 matrix P containing the
     # reconstructed 3D points.
     return None
+
 
 def get_texture(images, region_points, texture_size=256):
     """Given a set of images and 4 points for each image representing a
