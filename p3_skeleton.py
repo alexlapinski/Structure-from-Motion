@@ -24,13 +24,8 @@ def build_W(points):
 
         for p in xrange(len(frame)):
             point = frame[p]
-            normalized_x = point[0] - x_average
-            normalized_y = point[1] - y_average
-
-            #normalized_W[f][p] = normalized_x
-            #normalized_W[f + num_frames][p] = normalized_y
-            normalized_W[p][f] = point[0]
-            normalized_W[p][f + num_frames] = point[1]
+            normalized_W[p][f] = point[0] - x_average
+            normalized_W[p][f + num_frames] = point[1] - y_average
 
     for f in xrange(len(points)):
         frame = points[f]
