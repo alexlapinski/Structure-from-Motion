@@ -5,7 +5,42 @@ from cv2 import findHomography, warpPerspective
 def build_W(points):
     """Build the mean-centered point matrix W. points should be an array with shape
     (num_frames, num_points, 2)."""
-    return None
+
+    num_frames = points.shape[0]
+    num_points = points.shape[1]
+
+    normalized_W = np.zeros((num_points, 2 * num_frames))
+
+    # Points are in the format X Y
+    for f in xrange(len(points)):
+        frame = points[f]
+        x_total = 0
+        y_total = 0
+        for point in frame:
+            x_total += point[0]
+            y_total += point[1]
+        x_average = x_total / len(frame)
+        y_average = y_total / len(frame)
+
+        for p in xrange(len(frame)):
+            point = frame[p]
+            normalized_x = point[0] - x_average
+            normalized_y = point[1] - y_average
+
+            #normalized_W[f][p] = normalized_x
+            #normalized_W[f + num_frames][p] = normalized_y
+            normalized_W[p][f] = point[0]
+            normalized_W[p][f + num_frames] = point[1]
+
+    for f in xrange(len(points)):
+        frame = points[f]
+        print "Frame " + str(f + 1)
+        print frame[0:2]
+
+    print normalized_W
+
+
+    return normalized_W
 
 
 def compute_RS(W):
@@ -30,6 +65,7 @@ def sfm(points):
     """Run the SfM factorization on a set of points. points will be an array
     with shape (num_frames, num_points, 2)"""
     # Construct the required W/Rh/Sh matrices.
+    W_matrix = build_W(points)
 
     # Get ih/jh from Rh and use them to find Q.
 
