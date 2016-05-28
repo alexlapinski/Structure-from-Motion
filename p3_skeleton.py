@@ -9,7 +9,9 @@ def build_W(points, debug=False):
     num_frames = points.shape[0]
     num_points = points.shape[1]
 
-    normalized_W = np.zeros((num_points, 2 * num_frames))
+    num_rows = 2 * num_frames
+    num_cols = num_points
+    normalized_W = np.zeros((num_rows, num_cols))
 
     # Points are in the format X Y
     for f in xrange(len(points)):
@@ -24,29 +26,54 @@ def build_W(points, debug=False):
 
         for p in xrange(len(frame)):
             point = frame[p]
-            normalized_W[p][f] = point[0] - x_average
-            normalized_W[p][f + num_frames] = point[1] - y_average
-
-    if debug:
-        for f in xrange(len(points)):
-            frame = points[f]
-            print "Frame " + str(f + 1)
-            print frame[0:2]
-
-        print normalized_W
+            normalized_W[f][p] = point[0] - x_average
+            normalized_W[f + num_frames][p] = point[1] - y_average
 
     return normalized_W
 
 
 def compute_RS(W):
     """Compute the matrices R and S from W using the SVD."""
-    return None
+
+    U, d, V = np.linalg.svd(W)
+
+    # Take the 1d array 'd' and put it into the correct diagonal shape
+    D = np.diag(d)
+
+    # Cut down the factorized matricies to correspond with rank 3
+    U_prime = U[:, :3]
+    D_prime = D[:3, :3]
+    V_prime = V[:3, :]
+
+    # Apply sqrt of D to U and V
+    half_D_prime = np.sqrt(D_prime)
+    R = np.dot(U_prime, half_D_prime)
+    S = np.dot(half_D_prime, V_prime)
+
+    return R, S
 
 
-def solve_Q(ih, jh):
+def solve_Q(i_hat, j_hat):
     """Solve for Q that satisfies the unit-vector and orthogonality constraints
     on ih and jh."""
+
+    print i_hat.shape
+    print j_hat.shape
+
+    if i_hat.shape[0] != j_hat.shape[0] or i_hat.shape[1] != j_hat.shape[1]:
+        raise ValueError("i_hat's shape must equal j_hat's shape")
+
+    num_frames = i_hat.shape[0]
+
     # Build A and b
+    #A = ?
+
+
+
+
+    b = np.ones((num_frames, 1))
+    # Every 3rd row is equal to zero
+    b[2::3] = 0
 
     # Solve for c via least squares.
 
@@ -59,16 +86,20 @@ def solve_Q(ih, jh):
 def sfm(points):
     """Run the SfM factorization on a set of points. points will be an array
     with shape (num_frames, num_points, 2)"""
+
+    num_frames = points.shape[0]
+
     # Construct the required W/Rh/Sh matrices.
     normalized_W_matrix = build_W(points)
-    U, s, V = np.linalg.svd(normalized_W_matrix)
+    R_hat, S_hat = compute_RS(normalized_W_matrix)
 
-    S = np.zeros((U.shape[0], V.shape[0]))
-    S[:V.shape[0], :] = np.diag(s)
-
-
+    print "R_hat's shape", R_hat.shape
 
     # Get ih/jh from Rh and use them to find Q.
+    i_hat = R_hat[:num_frames, :]
+    j_hat = R_hat[num_frames:, :]
+
+    Q = solve_Q(i_hat, j_hat)
 
     # Use Q, Rh, and Sh to get R and S.
 
