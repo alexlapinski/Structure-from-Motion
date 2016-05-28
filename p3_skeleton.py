@@ -16,18 +16,21 @@ def build_W(points, debug=False):
     # Points are in the format X Y
     for f in xrange(len(points)):
         frame = points[f]
-        x_total = 0
-        y_total = 0
-        for point in frame:
-            x_total += point[0]
-            y_total += point[1]
-        x_average = x_total / len(frame)
-        y_average = y_total / len(frame)
+        #x_total = 0
+        #y_total = 0
+        #for point in frame:
+        #    x_total += point[0]
+        #    y_total += point[1]
+        #x_average = x_total / len(frame)
+        #y_average = y_total / len(frame)
+        mean = frame.mean(0)
+
+        print mean
 
         for p in xrange(len(frame)):
             point = frame[p]
-            normalized_W[f][p] = point[0] - x_average
-            normalized_W[f + num_frames][p] = point[1] - y_average
+            normalized_W[f][p] = point[0] - mean[0]
+            normalized_W[f + num_frames][p] = point[1] - mean[1]
 
     return normalized_W
 
@@ -136,14 +139,29 @@ def sfm(points):
     Q = solve_Q(i_hat, j_hat)
 
     # Use Q, Rh, and Sh to get R and S.
+    R = np.dot(R_hat, Q)
+    S = np.linalg.solve(Q, S_hat)
 
+    print "R.shape: ", R.shape, "; S.shape: ", S.shape
 
     # Extract the rotation matrices from R and put them into a list, one R per
     # image.
+    rotation_matricies = list()
+
+    offset = 0
+    for frame in xrange(num_frames):
+        rotation_matrix = np.zeros((2, R.shape[1]))
+        temp = R[offset:offset + 2]
+        print "Frame: ", frame, "temp.shape", temp.shape
+        rotation_matrix[:] = R[offset:offset + 2]
+        offset += 2
+        rotation_matricies.append(rotation_matrix)
 
     # Return the list of R matrices and an Nx3 matrix P containing the
     # reconstructed 3D points.
-    return None
+    print "S", S
+    print "S.T", S.T
+    return rotation_matricies, S.T
 
 
 def get_texture(images, region_points, texture_size=256):
