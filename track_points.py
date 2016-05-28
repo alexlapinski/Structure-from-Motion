@@ -73,7 +73,7 @@ if __name__ == "__main__":
         for j, pt in enumerate(points[i]):
             ipt = (int(pt[0]), int(pt[1]))
             cv2.circle(img_corrs, ipt, 5, (0, 0, 255), -1)
-            cv2.putText(img_corrs, str(j + 1), ipt, cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 0, 0), 1, cv2.LINE_AA)
+            cv2.putText(img_corrs, str(j + 1), ipt, cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 0, 0), 1, cv2.CV_AA)
         ext = filenames[i].split(".")[-1]
         cv2.imwrite(filenames[i].replace("." + ext, "_correspondences.png"), img_corrs)
     out.close()

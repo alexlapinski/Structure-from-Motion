@@ -32,6 +32,8 @@ if __name__ == "__main__":
     if not os.path.exists("reprojections"):
         os.mkdir("reprojections")
 
+    font = cv2.FONT_HERSHEY_SIMPLEX
+
     for R, img, fn, ipts in zip(Rmats, images, image_fns, image_points):
         Rpts = np.dot(P, R.T)
         center = ipts.mean(0)
@@ -41,13 +43,13 @@ if __name__ == "__main__":
         for i, pt in enumerate(pproj):
             ipt = (int(pt[0]), int(pt[1]))
             cv2.circle(img_reproj, ipt, 5, (0, 0, 255), -1)
-            cv2.putText(img_reproj, str(i + 1), ipt, cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 0, 0), 1, cv2.LINE_AA)
+            cv2.putText(img_reproj, str(i + 1), ipt, font, 0.5, (0, 0, 0), 1, cv2.CV_AA)
 
         img_corrs = img.copy()
         for i, pt in enumerate(ipts):
             ipt = (int(pt[0]), int(pt[1]))
             cv2.circle(img_corrs, ipt, 5, (0, 0, 255), -1)
-            cv2.putText(img_corrs, str(i + 1), ipt, cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 0, 0), 1, cv2.LINE_AA)
+            cv2.putText(img_corrs, str(i + 1), ipt, font, 0.5, (0, 0, 0), 1, cv2.CV_AA)
 
         fn = fn.split(os.path.sep)[-1]
         ext = fn.split(".")[-1]
