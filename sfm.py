@@ -16,7 +16,8 @@ if __name__ == "__main__":
     cols = list(zip(*[ln.strip().split() for ln in open(desc_file).readlines()]))
     image_fns = [os.path.sep.join(desc_base + [imgfn]) for imgfn in cols[0]]
     images = [cv2.imread(fn) for fn in image_fns]
-    images = [cv2.resize(img, (1024 * img.shape[1] // max(img.shape), 1024 * img.shape[0] // max(img.shape))) for img in images]
+    images = [cv2.resize(img, (1024 * img.shape[1] // max(img.shape),
+                               1024 * img.shape[0] // max(img.shape))) for img in images]
 
     # remaining columns are x-y coordinates of tracked points
     image_points = (np.column_stack(cols[1:])

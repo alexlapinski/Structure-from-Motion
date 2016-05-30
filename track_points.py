@@ -24,9 +24,9 @@ def pick_point(image, prev_pts=None):
 
     font = cv2.FONT_HERSHEY_SIMPLEX
     font_scale = 0.5
-    text_color = (0, 0, 0)
+    text_color = (200, 200, 200)
     thickness = 1
-    line_type = cv2.LINE_AA
+    line_type = cv2.CV_AA
     for i, pt in enumerate(prev_pts):
         cv2.circle(image, tuple(pt), 3, (0, 0, 255), -1)
         text = str(i + 1)

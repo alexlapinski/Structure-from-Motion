@@ -58,7 +58,7 @@ def solve_Q(i_hat, j_hat):
     num_frames = i_hat.shape[0]
 
     # Build A and b
-    A = np.zeros((3 * num_frames, 6))
+    A = np.zeros((3 * num_frames, 6), dtype=np.float32)
 
     offset = 0
     for frame in xrange(num_frames):
@@ -94,7 +94,7 @@ def solve_Q(i_hat, j_hat):
         A[offset:offset + 3] = [row_1, row_2, row_3]
         offset += 3
 
-    b = np.ones((3 * num_frames))
+    b = np.ones((3 * num_frames), dtype=np.float32)
     # Every 3rd row is equal to zero
     b[2::3] = 0
 
@@ -109,6 +109,7 @@ def solve_Q(i_hat, j_hat):
     C[2] = [c3, c5, c6]
 
     # Solve for Q and return it.
+    print C
     Q = np.linalg.cholesky(C)
 
     return Q
@@ -139,9 +140,12 @@ def sfm(points):
     rotation_matricies = list()
 
     for frame in xrange(num_frames):
-        rotation_matrix = np.zeros((2, R.shape[1]))
-        rotation_matrix[0] = R[frame]
-        rotation_matrix[1] = R[num_frames + frame]
+        rotation_matrix = np.zeros((2, 3), dtype=np.float32)
+        i_index = frame
+        j_index = num_frames + frame
+        print "Selecting R[%d] and R[%d] for frame %d" % (i_index, j_index, frame)
+        rotation_matrix[0] = R[i_index]
+        rotation_matrix[1] = R[j_index]
         rotation_matricies.append(rotation_matrix)
 
     # Return the list of R matrices and an Nx3 matrix P containing the
