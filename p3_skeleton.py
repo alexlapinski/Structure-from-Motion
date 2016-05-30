@@ -143,12 +143,9 @@ def sfm(points):
         rotation_matrix[0] = R[frame]
         rotation_matrix[1] = R[num_frames + frame]
         rotation_matricies.append(rotation_matrix)
-        print rotation_matrix
 
     # Return the list of R matrices and an Nx3 matrix P containing the
     # reconstructed 3D points.
-    print "S", S
-    print "S.T", S.T
     return rotation_matricies, S.T
 
 
@@ -162,14 +159,31 @@ def get_texture(images, region_points, texture_size=256):
     # Build a (4,2) array of X/Y texture coordinates for a
     # texture_size x texture_size square. The coordinates should
     # start at the top left (0,0) and proceed clockwise.
+    texture_coords = np.ndarray((4, 2))
+    top_left = [0, 0]
+    top_right = [texture_size, 0]
+    bottom_right = [texture_size, texture_size]
+    bottom_left = [0, texture_size]
+    texture_coords[:] = [top_left, top_right, bottom_right, bottom_left]
 
+    num_textures = len(region_points)
+    textures = np.ndarray((texture_size, texture_size, 3, num_textures))
+
+    i = 0
     for image, rect_points in zip(images, region_points):
         # Find a homography that warps the points for the current region to the
         # texture coordinates.
+        source_pts = rect_points.astype(np.float32).copy("C")
+        dest_pts = texture_coords.astype(np.float32).copy("C")
+        homography, _ = findHomography(source_pts, dest_pts)
 
         # Warp the image with the homography to obtain the texture for this
         # image and append it to the list of textures.
-        pass
+        output_size = (texture_size, texture_size)
+        texture = warpPerspective(image, homography, output_size)
+        textures[:, :, :, i] = texture
+        i += 1
 
     # Return the mean texture across the images.
-    return None
+    mean_texture = textures.mean(3)
+    return mean_texture
