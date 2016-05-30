@@ -72,7 +72,7 @@ def solve_Q(i_hat, j_hat):
         elem_1_3 = 2 * i_hat_1 * i_hat_3
         elem_1_4 = i_hat_2**2
         elem_1_5 = 2 * i_hat_2 * i_hat_3
-        elem_1_6 = 2 * i_hat_3**2
+        elem_1_6 = i_hat_3**2
         row_1 = [elem_1_1, elem_1_2, elem_1_3, elem_1_4, elem_1_5, elem_1_6]
 
         elem_2_1 = j_hat_1**2
